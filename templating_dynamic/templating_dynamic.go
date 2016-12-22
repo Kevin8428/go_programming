@@ -5,18 +5,11 @@ import (
   "text/template"
 )
 
-func main() {
-  http.HandleFunc("/", myHandlerFunc)
-  http.ListenAndServe(":8080", nil)
+type Context struct {
+    FirstName string
+    Message string
 }
 
-func myHandlerFunc(w http.ResponseWriter, req *http.Request) {
-  w.Header().Add("Content-Type", "text/html")
-  tmpl, err := template.New("anyNameForTemplate").Parse(doc)
-  if err == nil {
-    tmpl.Execute(w, req.URL.Path[1:]) // passing in some data now
-  }
-}
 
 const doc =`
 <!DOCTYPE html>
@@ -26,22 +19,55 @@ const doc =`
     <title>template</title>
   </head>
   <body>
-    <h1>Hi {{.}}</h1>
+    <h1>Hi {{.FirstName}}</h1>
+    <p>{{.Message}}</p>
   </body>
 </html>
 `
 
+func main() {
+  http.HandleFunc("/boston", bostonFunc)
+  http.HandleFunc("/vermont", vermontFunc)
+  http.HandleFunc("/maine", maineFunc)
+  http.HandleFunc("/", rootFunc)
+  http.ListenAndServe(":8080", nil)
+}
 
-/*
-{{.}}
-the period is a 'pipeline'
-pipeline: the path the template will take through the data to get to the data that needs to be injected
-the period says 'use all the data'
-test URLS:
-http://localhost:8080/
-http://localhost:8080/vermont
-http://localhost:8080/boston/vermont
-*/
+func bostonFunc(w http.ResponseWriter, req *http.Request) {
+  w.Header().Add("Content-Type", "text/html")
+  tmpl, err := template.New("anyNameForTemplate").Parse(doc)
+  if err == nil {
+    context := Context{"boston", "love that dirty water"}
+    tmpl.Execute(w, context) // passing in some data now
+  }
+}
+
+func vermontFunc(w http.ResponseWriter, req *http.Request) {
+  w.Header().Add("Content-Type", "text/html")
+  tmpl, err := template.New("anyNameForTemplate").Parse(doc)
+  if err == nil {
+    context := Context{"vermont", "go cats!"}
+    tmpl.Execute(w, context) // passing in some data now
+  }
+}
+
+func maineFunc(w http.ResponseWriter, req *http.Request) {
+  w.Header().Add("Content-Type", "text/html")
+  tmpl, err := template.New("anyNameForTemplate").Parse(doc)
+  if err == nil {
+    context := Context{"maine", "go blackbears!"}
+    tmpl.Execute(w, context) // passing in some data now
+  }
+}
+
+func rootFunc(w http.ResponseWriter, req *http.Request) {
+  w.Header().Add("Content-Type", "text/html")
+  tmpl, err := template.New("anyNameForTemplate").Parse(doc)
+  if err == nil {
+    context := Context{"index", "dynamic templating FTW"}
+    tmpl.Execute(w, context) // passing in some data now
+  }
+}
 
 
 
@@ -49,4 +75,4 @@ http://localhost:8080/boston/vermont
 
 
 
-//
+///
