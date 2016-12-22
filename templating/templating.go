@@ -13,11 +13,11 @@ import (
 )
 
 func main() {
-  http.HandleFunc("/", myHandleFunc)
+  http.HandleFunc("/", myHandlerFunc)
   http.ListenAndServe(":8080", nil) // nil means use default Mux
 }
 
-func MyHandleFunc(w http.ResponseWriter, req = http.Request) {
+func myHandlerFunc(w http.ResponseWriter, req *http.Request) {
   w.Header().Add("Content-Type", "text/html")
   // create a New template,
   tmpl, err := template.New("anyNameForTemplate").Parse(doc) // later will grab from file, for ease placed below
@@ -26,7 +26,8 @@ func MyHandleFunc(w http.ResponseWriter, req = http.Request) {
   }
 }
 
-const doc =`<!DOCTYPE html>
+const doc =`
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
